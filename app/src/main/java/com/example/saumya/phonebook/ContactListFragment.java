@@ -5,6 +5,7 @@ package com.example.saumya.phonebook;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Contacts.Photo;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -63,20 +65,21 @@ public class ContactListFragment extends ListFragment implements
     private int mPreviouslySelectedSearchItem = 0;
 
     private boolean mSearchQueryChanged;
-
+    private static ContactListFragment contct;
 
     private boolean mIsSearchResultView = false;
-    private SearchView searchView;
+
     private boolean check;
 
     public ContactListFragment() {
+
     }
-    public ContactListFragment(String param, SearchView searchView, boolean check) {
-        this.mSearchTerm = param;
-        this.searchView = searchView;
-        this.check = check;
-        Log.e("log", "called");
-    }
+//    public ContactListFragment(String param, SearchView searchView, boolean check) {
+//        this.mSearchTerm = param;
+//        this.searchView = searchView;
+//        this.check = check;
+//        Log.e("log", "called");
+//    }
     public void setSearchQuery(String query) {
         if (TextUtils.isEmpty(query)) {
             mIsSearchResultView = false;
@@ -85,6 +88,11 @@ public class ContactListFragment extends ListFragment implements
             mIsSearchResultView = true;
         }
     }
+
+    public static ContactListFragment getInstance(){
+        return contct;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,61 +115,14 @@ public class ContactListFragment extends ListFragment implements
         mImageLoader.setLoadingImage(R.drawable.ic_contact_picture_holo_light);
 
         mImageLoader.addImageCache(getActivity().getSupportFragmentManager(), 0.1f);
-//        if (check == true) {
-//            Log.e("log", "in if");
-//
-//            if (Utils.hasHoneycomb()) {
-//                Log.e("log", "one");
-//
-//                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//                    @Override
-//                    public boolean onQueryTextSubmit(String queryText) {
-//
-//                        Log.e("log", "2");
-//                        return true;
-//                    }
-//
-//                    @Override
-//                    public boolean onQueryTextChange(String newText) {
-//
-//                        String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
-//                        Log.e("log", "3");
-//
-//                        if (mSearchTerm == null && newFilter == null) {
-//                            return true;
-//                        }
-//                        if (mSearchTerm != null && mSearchTerm.equals(newFilter)) {
-//                            Log.e("log", "4");
-//                            return true;
-//                        }
-//                        mSearchTerm = newFilter;
-//                        Log.e("log", "" + mSearchTerm);
-//
-//                        Log.e("log", "5");
-//                        mSearchQueryChanged = true;
-//                        getLoaderManager().restartLoader(
-//                                ContactsQuery.QUERY_ID, null, ContactListFragment.this);
-//                        Log.e("log", "6");
-//                        return true;
-//                    }
-//                });
-//
-//
-//                if (mSearchTerm != null) {
-//
-//                    final String savedSearchTerm = mSearchTerm;
-//                    Log.e("log", "10");
-//
-//                    if (Utils.hasICS()) {
-//
-//                    }
-//                    Log.e("log", "" + mSearchTerm);
-//                    Log.e("log", "" + SearchManager.QUERY);
-//
-//                    searchView.setQuery(savedSearchTerm, false);
-//                }
-//            }
-//        }
+        if (check == true) {
+            Log.e("log", "in if");
+
+            if (Utils.hasHoneycomb()) {
+                Log.e("log", "one");
+
+                  }
+        }
 
     }
 
@@ -178,7 +139,7 @@ public class ContactListFragment extends ListFragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.e("log", "inactivitycreate");
-
+            contct=this;
         setListAdapter(mAdapter);
         getListView().setOnItemClickListener(this);
         getListView().setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -207,6 +168,8 @@ public class ContactListFragment extends ListFragment implements
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        Log.e("TAG","Attached");
 
         try {
             mOnContactSelectedListener = (OnContactsInteractionListener) activity;
@@ -421,8 +384,10 @@ public class ContactListFragment extends ListFragment implements
 
         private int indexOfSearchQuery(String displayName) {
             if (!TextUtils.isEmpty(mSearchTerm)) {
+                Log.e("display name",""+displayName);
                 return displayName.toLowerCase(Locale.getDefault()).indexOf(
                         mSearchTerm.toLowerCase(Locale.getDefault()));
+
             }
             return -1;
         }
@@ -565,5 +530,56 @@ public class ContactListFragment extends ListFragment implements
         final static int DISPLAY_NAME = 2;
         final static int PHOTO_THUMBNAIL_DATA = 3;
         final static int SORT_KEY = 4;
+    }
+
+    public void search(String param, SearchView searchView){
+   this.mSearchTerm=param;
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String queryText) {
+
+                Log.e("log", "2");
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                ;
+                String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
+                Log.e("log", "3");
+
+                if (mSearchTerm == null && newFilter == null) {
+                    return true;
+                }
+                if (mSearchTerm != null && mSearchTerm.equals(newFilter)) {
+                    Log.e("log", "4");
+                    return true;
+                }
+                mSearchTerm = newFilter;
+                Log.e("log", "" + mSearchTerm);
+
+                Log.e("log", "5");
+                mSearchQueryChanged = true;
+                getLoaderManager().restartLoader(ContactsQuery.QUERY_ID, null, ContactListFragment.this);
+
+                Log.e("log", "6");
+                return true;
+            }
+        });
+
+
+        if (mSearchTerm != null) {
+
+            final String savedSearchTerm = mSearchTerm;
+            Log.e("log", "10");
+
+            if (Utils.hasICS()) {
+
+            }
+            Log.e("log", "" + mSearchTerm);
+            Log.e("log", "" + SearchManager.QUERY);
+
+            searchView.setQuery(savedSearchTerm, false);
+        }
     }
 }
