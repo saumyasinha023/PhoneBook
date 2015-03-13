@@ -215,7 +215,7 @@ public class ContactListFragment extends ListFragment implements
 
         inflater.inflate(R.menu.contact_list_menu, menu);
 
-        MenuItem searchItem = menu.findItem(R.id.menu_search);
+
 
     }
 
@@ -241,11 +241,7 @@ public class ContactListFragment extends ListFragment implements
                 startActivity(intent);
                 break;
 
-            case R.id.menu_search:
-                if (!Utils.hasHoneycomb()) {
-                    getActivity().onSearchRequested();
-                }
-                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
