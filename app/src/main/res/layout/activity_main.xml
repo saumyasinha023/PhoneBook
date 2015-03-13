@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    tools:context=".MainActivity" >
+
+
+    <fragment
+        android:id="@+id/one"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        class="com.example.saumya.phonebook.fragment_alphabets" />
+
+
+    <fragment
+        android:id="@+id/two"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+      class="com.example.saumya.phonebook.ContactListFragment" />
+
+</LinearLayout>
